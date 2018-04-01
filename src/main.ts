@@ -1,16 +1,16 @@
-import { createServer } from 'restify';
+import * as restify from 'restify';
+
+import { joinVoiceChannelHandler, testHandler, guildsHandler } from './botHandler';
 
 
-function respond(req, res, next) {
-  res.send('hello ' + req.params.name);
-  next();
-}
-
-const server = createServer();
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
 
 
+const server = restify.createServer();
+
+
+server.post('/api/joinVoiceChannel/:id', joinVoiceChannelHandler);
+server.get('/api/test', testHandler);
+server.get('/api/guilds', guildsHandler);
 
 server.listen(8080, function() {
   console.log('%s listening at %s', server.name, server.url);

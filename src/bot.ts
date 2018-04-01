@@ -1,22 +1,11 @@
 import { mapValues } from 'lodash/object';
-
-
-const Discord = require('discord.js');
+import * as Discord from 'discord.js';
 import { join as pathJoin } from 'path';
 
+import { formatGuilds } from './format';
+import { token } from './config';
+
 const client = new Discord.Client();
-
-
-
-const deepConvertCollectionsToArrays = (obj: Object) =>
-  mapValues(obj, val => {
-    if (!val) { return val; }
-
-    return val.constructor === Discord.Collection ?
-     val.map() :
-     val;
-
-  });
 
 
 
@@ -24,36 +13,26 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', message => {
-  // Voice only works in guilds, if the message does not come from a guild,
-  // we ignore it
-  if (!message.guild) { return; }
+client.login(token);
 
-  if (message.content === '/join') {
-    // Only try to join the sender's voice channel if they are in one themselves
-    if (message.member.voiceChannel) {
-      message.member.voiceChannel.join()
-        .then(voiceConnection => {
-          //  message.reply('I have successfully connected to the channel!');
-          const dispatcher = voiceConnection.playFile(pathJoin(__dirname, 'pg.mp3'));
 
-        })
-        .catch(console.log);
-    } else {
-      message.reply('You need to join a voice channel first!');
-    }
+const status = () => formatGuilds(client.guilds);
+
+const getGuilds = () => formatGuilds(client.guilds);
+
+const joinVoiceChannel = (id: string): Promise<string> => {
+
+  const channel = client.channels.get(id);
+  if (channel instanceof Discord.VoiceChannel) {
+    return channel.join().then(connection => {
+      const dispatcher = connection.playFile(pathJoin(__dirname, 'files', 'pg.mp3'));
+      dispatcher.setVolume(0.5);
+      return 'successfully joined';
+    });
   }
-});
+
+  return Promise.resolve('VoiceChannel not found'); // TODO better error handling
+};
 
 
-
-
-const status = () => deepConvertCollectionsToArrays(client.guilds.first());
-// Object.values(client.guilds.first()).forEach(v => v ? console.log(v.constructor.name) : null);
-// Object.values(client.guilds.array()[0]).forEach(v => console.log(JSON.stringify(v)));
-
-const getGuilds = () => deepConvertCollectionsToArrays(client.guilds);
-
-
-
-export { status, getGuilds };
+export { status, getGuilds, joinVoiceChannel };
