@@ -3,7 +3,7 @@ import * as Discord from 'discord.js';
 import { join as pathJoin } from 'path';
 
 import { formatGuilds } from './format';
-import { token } from './config';
+import { token , defaultVolume } from './config';
 
 const client = new Discord.Client();
 
@@ -20,18 +20,18 @@ const status = () => formatGuilds(client.guilds);
 
 const getGuilds = () => formatGuilds(client.guilds);
 
-const joinVoiceChannel = (id: string): Promise<string> => {
+const joinVoiceChannel = (id: string): Promise<{ message: string }> => {
 
   const channel = client.channels.get(id);
   if (channel instanceof Discord.VoiceChannel) {
     return channel.join().then(connection => {
       const dispatcher = connection.playFile(pathJoin(__dirname, 'files', 'pg.mp3'));
-      dispatcher.setVolume(0.5);
-      return 'successfully joined';
+      dispatcher.setVolume(defaultVolume);
+      return {message: 'Sucessfully joined VoiceChannel: ' + channel.name};
     });
   }
 
-  return Promise.resolve('VoiceChannel not found'); // TODO better error handling
+  return Promise.resolve({ message: 'VoiceChannel not found'} ); // TODO better error handling
 };
 
 
