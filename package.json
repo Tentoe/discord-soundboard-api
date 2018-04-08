@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./loadENV.sh && node ./build/main.js",
+    "start": "export $(cat .env | xargs) && tsc && node ./build/main.js",
     "build": "tsc",
     "startprod": "node ./build/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
