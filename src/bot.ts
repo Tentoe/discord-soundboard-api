@@ -4,9 +4,9 @@ import { join as pathJoin } from 'path';
 
 import { formatGuilds } from './format';
 import { token, defaultVolume } from './config';
+import { getSoundBoards } from './database';
 
 const client = new Discord.Client();
-
 
 
 client.on('ready', () => {
