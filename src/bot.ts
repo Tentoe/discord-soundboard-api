@@ -3,7 +3,7 @@ import * as Discord from 'discord.js';
 import { join as pathJoin } from 'path';
 
 import { formatGuilds } from './format';
-import { token, defaultVolume } from './config';
+import { token, defaultVolume, soundDir } from './config';
 import { getSoundBoards } from './database';
 
 const client = new Discord.Client();
@@ -24,7 +24,7 @@ const joinVoiceChannel = (id: string): Promise<{ message: string }> => {
   const channel = client.channels.get(id);
   if (channel instanceof Discord.VoiceChannel) {
     return channel.join().then(connection => {
-      const dispatcher = connection.playFile(pathJoin(__dirname, 'files', 'pg.mp3'));
+      const dispatcher = connection.playFile(pathJoin(soundDir, 'pg.mp3'));
       dispatcher.setVolume(defaultVolume);
       return { message: 'Sucessfully joined VoiceChannel: ' + channel.name };
     });
