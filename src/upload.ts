@@ -1,33 +1,37 @@
 import * as restify from 'restify';
-import { join as pathJoin } from 'path';
+import { join as pathJoin, extname } from 'path';
 import * as fs from 'fs';
 
-import {  soundDir } from './config';
+import { soundDir } from './config';
+import { getFileHash } from './hash';
+import { newSoundFile } from './database';
 
 
-const printFile =  (err, data) => {
-  /* If an error exists, show it, otherwise show the file */
-  err ? console.log(err) : console.log(JSON.stringify(data) );
-  };
+const moveFile = async file => { // TODO split
+  // console.log(/^audio\//.test(file.name)); // TODO analyze file
 
-const moveFile = f => {
-  // RequestFileInterface is incomplete. It should contain name, but doesn't
-  interface RequestFileInterfaceWithName extends restify.RequestFileInterface {
-      name: string;
-  }
-  const file = <RequestFileInterfaceWithName>f;
+  if (!file.name) { return console.error('Uploaded File has no name'); } // TODO better Error hanlding
 
-  if ( !file.name ) { return console.error('Uploaded File has no name'); } // TODO better Error hanlding
+  const hash = await getFileHash(file.path);
+  const newFileName = hash + extname(file.name);
+  const newFilePath = pathJoin(soundDir, newFileName);
 
-  fs.rename(file.path, pathJoin(soundDir, file.name), err => err ? console.log(err) : null); // TODO better Error hanlding
+  // TODO error handling file already exists?
+
+  fs.rename(file.path, newFilePath, err => {
+    if (err) { return console.log(err); }
+    newSoundFile(file.name, newFileName);
+  }); // TODO better Error hanlding
+
+
 };
 
 const uploadHandler: restify.RequestHandlerType = (req, res, next) => {
 
   Object.values(req.files).map(moveFile);
-  res.send('mptj');
+
+  res.send('mptj'); // TODO error hanlding
   next();
 };
-
 
 export { uploadHandler };
