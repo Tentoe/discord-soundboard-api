@@ -2,7 +2,7 @@ import * as restify from 'restify';
 
 import { joinVoiceChannelHandler, testHandler, guildsHandler } from './botHandler';
 import { uploadHandler } from './upload';
-
+import { soundBoardsHandler } from './data';
 
 
 const server = restify.createServer();
@@ -16,6 +16,7 @@ server.post('/api/joinVoiceChannel/:id', joinVoiceChannelHandler);
 server.get('/api/test', testHandler);
 server.get('/api/guilds', guildsHandler);
 server.post('/api/upload', uploadHandler);
+server.get('/api/soundboards', soundBoardsHandler);
 
 // any other Path
 server.get('*', restify.plugins.serveStatic({
