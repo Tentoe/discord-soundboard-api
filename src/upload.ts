@@ -18,8 +18,9 @@ const moveFile = async file => { // TODO split
 
   // TODO error handling file already exists?
 
-  fs.rename(file.path, newFilePath, err => {
-    if (err) { return console.log(err); }
+  fs.copyFile(file.path, newFilePath, err => {
+    if (err) { return console.error(err); }
+    fs.unlink(file.path, err2 => console.error );
     newSoundFile(file.name, newFileName);
   }); // TODO better Error hanlding
 
