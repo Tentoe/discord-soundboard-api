@@ -18,4 +18,6 @@ const newSoundBoard = soundBoardObject => new SoundBoard({ name: 'first Soundboa
 // TODO delete properties frontend doesn't need
 const getSoundBoards = () => SoundBoard.find().populate('soundfiles');
 const getSoundFiles = () => SoundFile.find();
-export { getSoundBoards, getSoundFiles, newSoundFile };
+const getSoundFile = id => SoundFile.findOne({ _id: new mongoose.Types.ObjectId(id) });
+
+export { getSoundBoards, getSoundFiles, newSoundFile, getSoundFile };

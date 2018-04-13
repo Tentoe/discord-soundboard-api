@@ -1,10 +1,10 @@
 import * as restify from 'restify';
 
-import { status, getGuilds, joinVoiceChannel } from './bot';
+import { status, getGuilds, joinVoiceChannel, play } from './bot';
 
 
 const joinVoiceChannelHandler: restify.RequestHandlerType = (req, res, next) => {
-  joinVoiceChannel(req.params.id).then(result => res.send(result)); // TODO error hanlding
+  joinVoiceChannel(req.params.id).then(result => res.send('yay maybe?')); // TODO error hanlding
   next();
 };
 
@@ -20,5 +20,12 @@ const guildsHandler: restify.RequestHandlerType = (req, res, next) => {
   next();
 };
 
+const playHandler: restify.RequestHandlerType = (req, res, next) => {
+  const { voiceID, soundID } = req.params;
+  play(voiceID, soundID);
+  res.send('playing' + req.params);
+  next();
+};
 
-export { joinVoiceChannelHandler, testHandler, guildsHandler };
+
+export { joinVoiceChannelHandler, testHandler, guildsHandler, playHandler };

@@ -1,6 +1,6 @@
 import * as restify from 'restify';
 
-import { joinVoiceChannelHandler, testHandler, guildsHandler } from './botHandler';
+import { joinVoiceChannelHandler, testHandler, guildsHandler, playHandler } from './botHandler';
 import { uploadHandler } from './upload';
 import { soundBoardsHandler } from './data';
 
@@ -12,9 +12,10 @@ server.use(restify.plugins.bodyParser({
 }));
 
 
-server.post('/api/joinVoiceChannel/:id', joinVoiceChannelHandler);
+server.post('/api/joinVoiceChannel/:id', joinVoiceChannelHandler); // TODO rename to /voicechannel/join
 server.get('/api/test', testHandler);
 server.get('/api/guilds', guildsHandler);
+server.get('/api/voicechannel/:voiceID/play/:soundID', playHandler);
 server.post('/api/upload', uploadHandler);
 server.get('/api/soundboards', soundBoardsHandler);
 

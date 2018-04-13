@@ -1,10 +1,10 @@
-import { mapValues } from 'lodash/object';
+import { mapValues, get } from 'lodash/object';
 import * as Discord from 'discord.js';
 import { join as pathJoin } from 'path';
 
 import { formatGuilds } from './format';
 import { token, defaultVolume, soundDir } from './config';
-import { getSoundBoards } from './database';
+import { getSoundBoards, getSoundFile } from './database';
 
 const client = new Discord.Client();
 
@@ -19,19 +19,28 @@ const status = () => formatGuilds(client.guilds);
 
 const getGuilds = () => formatGuilds(client.guilds);
 
-const joinVoiceChannel = (id: string): Promise<{ message: string }> => {
+const joinVoiceChannel = (id: string): Promise<Discord.VoiceConnection | { message: string }> => {
 
   const channel = client.channels.get(id);
   if (channel instanceof Discord.VoiceChannel) {
-    return channel.join().then(connection => {
-      const dispatcher = connection.playFile(pathJoin(soundDir, 'pg.mp3'));
-      dispatcher.setVolume(defaultVolume);
-      return { message: 'Sucessfully joined VoiceChannel: ' + channel.name };
-    });
+    return channel.join();
   }
 
   return Promise.resolve({ message: 'VoiceChannel not found' }); // TODO better error handling
 };
 
+const play = async (voiceID, soundID) => {
+  const soundFile = await getSoundFile(soundID);
+  const channel = client.channels.get(voiceID);
+  if (channel instanceof Discord.VoiceChannel) {
+    const dispatcher = channel.connection.playFile(pathJoin(soundDir, soundFile.filename));
+    // TODO error handling
+    dispatcher.setVolume(defaultVolume);
+  } // TODO else throw NotFoundError
 
-export { status, getGuilds, joinVoiceChannel };
+
+
+
+};
+
+export { status, getGuilds, joinVoiceChannel, play };
