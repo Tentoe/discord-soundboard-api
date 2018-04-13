@@ -38,9 +38,14 @@ const play = async (voiceID, soundID) => {
     dispatcher.setVolume(defaultVolume);
   } // TODO else throw NotFoundError
 
+};
 
-
+const stop = async voiceID => {
+  const channel = client.channels.get(voiceID);
+  if (channel instanceof Discord.VoiceChannel) {
+     channel.connection.dispatcher.end('stop');
+  } // TODO else throw NotFoundError
 
 };
 
-export { status, getGuilds, joinVoiceChannel, play };
+export { status, getGuilds, joinVoiceChannel, play, stop };
