@@ -1,6 +1,6 @@
 import * as restify from 'restify';
 
-import { joinVoiceChannelHandler, testHandler, guildsHandler, playHandler , voiceChannelStop} from './botHandler';
+import { joinVoiceChannelHandler, testHandler, guildsHandler, playHandler , voiceChannelStop , voiceChannelLeave} from './botHandler';
 import { uploadHandler } from './upload';
 import { soundBoardsHandler } from './data';
 import { staticHandler } from './static';
@@ -11,12 +11,13 @@ server.use(restify.plugins.bodyParser({
 }));
 
 
-server.post('/api/voicechannel/:id/join', joinVoiceChannelHandler); // TODO rename to /voicechannel/join
+server.post('/api/voicechannel/:id/join', joinVoiceChannelHandler);
+server.post('/api/voicechannel/:id/stop', voiceChannelStop);
+server.post('/api/voicechannel/:id/leave', voiceChannelLeave);
 
-server.get('/api/voicechannel/:id/stop', voiceChannelStop);
 server.get('/api/test', testHandler);
 server.get('/api/guilds', guildsHandler);
-server.get('/api/voicechannel/:voiceID/play/:soundID', playHandler);
+server.post('/api/voicechannel/:voiceID/play/:soundID', playHandler);
 server.post('/api/upload', uploadHandler);
 server.get('/api/soundboards', soundBoardsHandler);
 // TODO add route /api/ that throws an error

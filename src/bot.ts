@@ -54,4 +54,14 @@ const stop = async voiceID => {
 
 };
 
-export { status, getGuilds, joinVoiceChannel, play, stop };
+const leaveVoiceChannel = (id: string): void | { message: string }  => {
+
+  const channel = client.channels.get(id);
+  if (channel instanceof Discord.VoiceChannel) {
+    return channel.leave();
+  }
+
+  return { message: 'VoiceChannel not found' }; // TODO better error handling
+};
+
+export { status, getGuilds, joinVoiceChannel, play, stop , leaveVoiceChannel};

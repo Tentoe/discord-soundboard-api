@@ -1,6 +1,6 @@
 import * as restify from 'restify';
 
-import { status, getGuilds, joinVoiceChannel, play, stop } from './bot';
+import { status, getGuilds, joinVoiceChannel, play, stop, leaveVoiceChannel } from './bot';
 
 
 const joinVoiceChannelHandler: restify.RequestHandlerType = (req, res, next) => {
@@ -33,5 +33,10 @@ const voiceChannelStop: restify.RequestHandlerType = (req, res, next) => {
   next();
 };
 
+const voiceChannelLeave: restify.RequestHandlerType = (req, res, next) => {
+  leaveVoiceChannel(req.params.id);
+  res.send('left' + req.params.id);
+  next();
+};
 
-export { joinVoiceChannelHandler, testHandler, guildsHandler, playHandler, voiceChannelStop };
+export { joinVoiceChannelHandler, testHandler, guildsHandler, playHandler, voiceChannelStop, voiceChannelLeave };
