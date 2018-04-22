@@ -11,7 +11,8 @@ server.use(restify.plugins.bodyParser({
 }));
 
 
-server.post('/api/joinVoiceChannel/:id', joinVoiceChannelHandler); // TODO rename to /voicechannel/join
+server.post('/api/voicechannel/:id/join', joinVoiceChannelHandler); // TODO rename to /voicechannel/join
+
 server.get('/api/voicechannel/:id/stop', voiceChannelStop);
 server.get('/api/test', testHandler);
 server.get('/api/guilds', guildsHandler);
