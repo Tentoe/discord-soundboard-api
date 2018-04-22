@@ -34,7 +34,13 @@ const play = async (voiceID, soundID) => {
   const channel = client.channels.get(voiceID);
   if (channel instanceof Discord.VoiceChannel) {
     const dispatcher = channel.connection.playFile(pathJoin(soundDir, soundFile.filename));
+
+    // prevent delay to build up because of a bug
+    const player: any = channel.connection.player; // TODO try catch
+    player.streamingData.pausedTime = 0;
+
     // TODO error handling
+
     dispatcher.setVolume(defaultVolume);
   } // TODO else throw NotFoundError
 
@@ -43,7 +49,7 @@ const play = async (voiceID, soundID) => {
 const stop = async voiceID => {
   const channel = client.channels.get(voiceID);
   if (channel instanceof Discord.VoiceChannel) {
-     channel.connection.dispatcher.end('stop');
+    channel.connection.dispatcher.end('stop');
   } // TODO else throw NotFoundError
 
 };
