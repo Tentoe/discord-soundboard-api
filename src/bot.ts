@@ -2,7 +2,7 @@ import { mapValues, get } from 'lodash/object';
 import * as Discord from 'discord.js';
 import { join as pathJoin } from 'path';
 
-import { formatGuilds } from './format';
+import { formatGuilds, formatGuild } from './format';
 import { token, defaultVolume, soundDir } from './config';
 import { getSoundBoards, getSoundFile, getRandomSoundFile } from './database';
 
@@ -18,6 +18,7 @@ client.login(token);
 const status = () => formatGuilds(client.guilds);
 
 const getGuilds = () => formatGuilds(client.guilds);
+const getGuild = guildID => formatGuild(client.guilds.get(guildID));
 
 const joinVoiceChannel = (id: string): Promise<Discord.VoiceConnection | { message: string }> => {
 
@@ -46,6 +47,23 @@ const play = async (voiceID, soundID) => {
 
 };
 
+const playGuild = async (guildID, soundID) => {// TODO consolidate with play function
+  const soundFile = await getSoundFile(soundID);
+  const connection = client.guilds.get(guildID).voiceConnection;
+
+  const dispatcher = connection.playFile(pathJoin(soundDir, soundFile.filename));
+
+  // prevent delay to build up because of a bug
+  const player: any = connection.player; // TODO try catch
+  player.streamingData.pausedTime = 0;
+
+  // TODO error handling
+
+  dispatcher.setVolume(defaultVolume);
+
+
+};
+
 const random = async voiceID => { // TODO consolidate with play function
   const soundFile = await getRandomSoundFile();
   const channel = client.channels.get(voiceID);
@@ -63,6 +81,23 @@ const random = async voiceID => { // TODO consolidate with play function
 
 };
 
+const randomGuild = async guildID => { // TODO consolidate with play function
+  const soundFile = await getRandomSoundFile();
+  const connection = client.guilds.get(guildID).voiceConnection;
+
+  const dispatcher = connection.playFile(pathJoin(soundDir, soundFile.filename));
+
+  // prevent delay to build up because of a bug
+  const player: any = connection.player; // TODO try catch
+  player.streamingData.pausedTime = 0;
+
+  // TODO error handling
+
+  dispatcher.setVolume(defaultVolume);
+
+
+};
+
 const stop = async voiceID => {
   const channel = client.channels.get(voiceID);
   if (channel instanceof Discord.VoiceChannel) {
@@ -71,7 +106,13 @@ const stop = async voiceID => {
 
 };
 
-const leaveVoiceChannel = (id: string): void | { message: string }  => {
+const stopGuild = async guildID => {
+  const connection = client.guilds.get(guildID).voiceConnection;
+
+  connection.dispatcher.end('stopGuild');
+};
+
+const leaveVoiceChannel = (id: string): void | { message: string } => {
 
   const channel = client.channels.get(id);
   if (channel instanceof Discord.VoiceChannel) {
@@ -81,6 +122,27 @@ const leaveVoiceChannel = (id: string): void | { message: string }  => {
   return { message: 'VoiceChannel not found' }; // TODO better error handling
 };
 
+const leaveVoiceChannelGuild = (id: string): void | { message: string } => {
 
+  const channel = client.guilds.get(id).voiceConnection.channel;
+  if (channel instanceof Discord.VoiceChannel) {
+    return channel.leave();
+  }
 
-export { status, getGuilds, joinVoiceChannel, play, stop , leaveVoiceChannel , random};
+  return { message: 'VoiceChannel not found' }; // TODO better error handling
+};
+
+export {
+  status,
+  getGuilds,
+  joinVoiceChannel,
+  play,
+  stop,
+  leaveVoiceChannel,
+  random,
+  getGuild,
+  leaveVoiceChannelGuild,
+  stopGuild,
+  playGuild,
+  randomGuild
+};

@@ -7,7 +7,12 @@ import {
   playHandler,
   voiceChannelStop,
   voiceChannelLeave,
-  randomHandler
+  randomHandler,
+  guildHandler,
+  voiceChannelGuildLeave,
+  voiceChannelGuildStop,
+  playGuildHandler,
+  randomGuildHandler
 } from './botHandler';
 import { uploadHandler } from './upload';
 import { soundBoardsHandler } from './data';
@@ -27,6 +32,12 @@ server.post('/api/voicechannel/:voiceID/random', randomHandler);
 
 server.get('/api/test', testHandler); // TODO Delete
 server.get('/api/guilds', guildsHandler);
+
+server.get('/api/guild/:id', guildHandler);
+server.post('/api/guild/:id/leave', voiceChannelGuildLeave);
+server.post('/api/guild/:id/stop', voiceChannelGuildStop);
+server.post('/api/guild/:guildID/play/:soundID', playGuildHandler);
+server.post('/api/guild/:id/random', randomGuildHandler);
 
 server.post('/api/upload', uploadHandler);
 server.get('/api/soundboards', soundBoardsHandler);

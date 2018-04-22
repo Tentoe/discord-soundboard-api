@@ -10,17 +10,26 @@ const withoutGuildProperty = (obj: Discord.Emoji | Discord.Role | Discord.GuildM
 };
 
 // The extra guild Property of some Objects causes them to be Circular, what makes them not serializable.
-const formatGuild = (guild: Discord.Guild) => ({
-  ...guild,
-  members: Array.from(guild.members.values()).filter(noClientUser).map(withoutGuildProperty),
-  channels: Array.from(guild.channels.values()).map(withoutGuildProperty),
-  roles: Array.from(guild.roles.values()).map(withoutGuildProperty),
-  presences: Array.from(guild.presences.values()),
-  emojis: Array.from(guild.emojis.values()).map(withoutGuildProperty),
-  iconURL: guild.iconURL
-});
+const formatGuild = (guild: Discord.Guild) => {
+  // voiceConnection can be null
+  let voiceChannel = '';
+  try {
+    voiceChannel = guild.voiceConnection.channel.id || voiceChannel;
+  } catch { }
+
+  return {
+    ...guild,
+    members: Array.from(guild.members.values()).filter(noClientUser).map(withoutGuildProperty),
+    channels: Array.from(guild.channels.values()).map(withoutGuildProperty),
+    roles: Array.from(guild.roles.values()).map(withoutGuildProperty),
+    presences: Array.from(guild.presences.values()),
+    emojis: Array.from(guild.emojis.values()).map(withoutGuildProperty),
+    iconURL: guild.iconURL,
+    voiceChannel
+  };
+};
 
 const formatGuilds = (guilds: Discord.Collection<Discord.Snowflake, Discord.Guild>) =>
   Array.from(guilds.values()).map(guild => formatGuild(guild));
 
-export { formatGuilds };
+export { formatGuilds, formatGuild };
