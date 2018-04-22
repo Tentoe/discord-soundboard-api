@@ -4,7 +4,7 @@ import { join as pathJoin } from 'path';
 
 import { formatGuilds } from './format';
 import { token, defaultVolume, soundDir } from './config';
-import { getSoundBoards, getSoundFile } from './database';
+import { getSoundBoards, getSoundFile, getRandomSoundFile } from './database';
 
 const client = new Discord.Client();
 
@@ -46,6 +46,23 @@ const play = async (voiceID, soundID) => {
 
 };
 
+const random = async voiceID => { // TODO consolidate with play function
+  const soundFile = await getRandomSoundFile();
+  const channel = client.channels.get(voiceID);
+  if (channel instanceof Discord.VoiceChannel) {
+    const dispatcher = channel.connection.playFile(pathJoin(soundDir, soundFile.filename));
+
+    // prevent delay to build up because of a bug
+    const player: any = channel.connection.player; // TODO try catch
+    player.streamingData.pausedTime = 0;
+
+    // TODO error handling
+
+    dispatcher.setVolume(defaultVolume);
+  } // TODO else throw NotFoundError
+
+};
+
 const stop = async voiceID => {
   const channel = client.channels.get(voiceID);
   if (channel instanceof Discord.VoiceChannel) {
@@ -64,4 +81,6 @@ const leaveVoiceChannel = (id: string): void | { message: string }  => {
   return { message: 'VoiceChannel not found' }; // TODO better error handling
 };
 
-export { status, getGuilds, joinVoiceChannel, play, stop , leaveVoiceChannel};
+
+
+export { status, getGuilds, joinVoiceChannel, play, stop , leaveVoiceChannel , random};

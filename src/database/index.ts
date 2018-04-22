@@ -19,5 +19,10 @@ const newSoundBoard = soundBoardObject => new SoundBoard({ name: 'first Soundboa
 const getSoundBoards = () => SoundBoard.find().populate('soundfiles');
 const getSoundFiles = () => SoundFile.find();
 const getSoundFile = id => SoundFile.findOne({ _id: new mongoose.Types.ObjectId(id) });
+const getRandomSoundFile = async () =>  {
+  const random = Math.floor(Math.random() * await SoundFile.count());
+  return SoundFile.findOne().skip(random);
+};
 
-export { getSoundBoards, getSoundFiles, newSoundFile, getSoundFile };
+
+export { getSoundBoards, getSoundFiles, newSoundFile, getSoundFile, getRandomSoundFile };
