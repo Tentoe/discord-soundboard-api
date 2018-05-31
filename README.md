@@ -12,3 +12,12 @@
 
 ## To Test:
 `npm test`
+
+# Redis Shemas
+
+## H soundfile:soundfileID
+- name
+- filename
+
+## L soundboard:soundboardID
+list of soundfileIDs in a soundboard
