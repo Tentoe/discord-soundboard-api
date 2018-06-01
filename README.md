@@ -15,6 +15,8 @@
 
 # Redis Shemas
 
+- `*:nextval` next id for branch
+
 ## H soundfile:soundfileID
 - name
 - filename
