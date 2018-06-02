@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start": "actionhero start",
+    "dev": "export $(cat .env 2>/dev/null | xargs) > /dev/null && actionhero start",
     "actionhero": "actionhero",
     "pretest": "standard",
     "test": "jest"
