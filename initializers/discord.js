@@ -25,7 +25,11 @@ module.exports = class DiscordInitializer extends Initializer {
 
     api.discord.getGuilds = () => api.format.guilds(client.guilds);
 
-    api.discord.test = async () => 'redis.hgetall(key)';
+    api.discord.getGuild = (id) => {
+      const guild = client.guilds.get(id);
+      if (guild) return api.format.guild(guild);
+      throw new Error('Requested guild not found.');
+    };
   }
 
   async start() {

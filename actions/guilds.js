@@ -2,7 +2,7 @@
 
 const { Action, api } = require('actionhero');
 
-module.exports = class MyAction extends Action {
+exports.guilds = class MyAction extends Action {
   constructor() {
     super();
     this.name = 'guilds';
@@ -12,5 +12,18 @@ module.exports = class MyAction extends Action {
 
   async run({ response }) {
     response.data = api.discord.getGuilds();
+  }
+};
+
+exports.guild = class GuildAction extends Action {
+  constructor() {
+    super();
+    this.name = 'guild';
+    this.description = 'an actionhero action';
+    this.outputExample = {};
+    this.input = {};
+  }
+  async run({ response, connection: { params } }) {
+    response.data = api.discord.getGuild(params.id);
   }
 };
