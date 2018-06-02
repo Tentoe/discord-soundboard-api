@@ -8,12 +8,12 @@ module.exports = class UploadAction extends Action {
     this.name = 'upload';
     this.description = 'an actionhero action'; // TODO
     this.outputExample = {};
-    this.input = {
-      file: { required: true }, // TODO
+    this.inputs = {
+      file: { required: true }, // TODO validate
     };
   }
-  async run({ response, connection }) {
-    await api.upload.addFile(connection.params.file);
+  async run({ response, connection: { params } }) {
+    await api.upload.addFile(params.file);
     response.success = 'yes';
   }
 };
