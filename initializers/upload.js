@@ -16,8 +16,8 @@ module.exports = class UploadInitializer extends Initializer {
 
   async initialize() {
     api.upload = {};
-    api.upload.addFile = async (file) => {
-      // TODO check filename (for wrong extention)
+    api.upload.addFile = async (file, guildId) => {
+      // TODO check filename (for wrong extension)
       const newFileName = file.hash + path.extname(file.name);
       const newFilePath = path.join(api.config.soundboard.soundFileDir, newFileName);
 
@@ -26,11 +26,10 @@ module.exports = class UploadInitializer extends Initializer {
       const copyFile = util.promisify(fs.copyFile);
       await copyFile(file.path, newFilePath);
 
-
       const unlink = util.promisify(fs.unlink);
       await unlink(file.path);
 
-      await api.soundfile.add(file.name, newFilePath);
+      await api.soundfile.add(file.name, newFileName, guildId);
     };
   }
 

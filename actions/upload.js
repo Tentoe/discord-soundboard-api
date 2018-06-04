@@ -9,11 +9,12 @@ module.exports = class UploadAction extends Action {
     this.description = 'an actionhero action'; // TODO
     this.outputExample = {};
     this.inputs = {
+      guildId: { required: true }, // TODO validate
       file: { required: true }, // TODO validate
     };
   }
-  async run({ response, connection: { params } }) {
-    await api.upload.addFile(params.file);
+  async run({ response, connection: { params: { file, guildId } } }) {
+    await api.upload.addFile(file, guildId);
     response.success = 'yes';
   }
 };
