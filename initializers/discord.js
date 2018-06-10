@@ -1,11 +1,11 @@
 'use strict';
 
 const { Initializer, api } = require('actionhero');
-const _ = require('lodash/object');
 const Discord = require('discord.js');
 
 const client = new Discord.Client();
 
+const logError = e => api.log('discord error', 'error', e);
 
 module.exports = class DiscordInitializer extends Initializer {
   constructor() {
@@ -32,20 +32,25 @@ module.exports = class DiscordInitializer extends Initializer {
     };
 
     api.discord.leave = (id) => {
-      const channel = _.get(client.guilds.get(id), 'voiceConnection.channel');
-      if (!channel) throw new Error('Bot is currently not in a voicechannel in this guild.');
-      channel.leave();
+      client.guilds.get(id).voiceConnection.disconnect();
     };
 
     api.discord.stop = (id) => {
       const connection = client.guilds.get(id).voiceConnection;
       if (!connection) throw new Error('Bot is not currently playing anything.');
+
       connection.dispatcher.end('api.discord.stop');
     };
 
-    api.discord.join = (id) => {
+    api.discord.join = async (id) => {
       const channel = client.channels.get(id);
-      if (channel) return channel.join();
+      if (channel) {
+        await channel.join();
+        channel.connection.on('error', logError);
+        channel.connection.on('warn', logError);
+        channel.connection.on('failed', logError);
+        return;
+      }
       throw new Error('Voicechannel not found.');
     };
 
@@ -54,6 +59,7 @@ module.exports = class DiscordInitializer extends Initializer {
       const guild = client.guilds.get(guildID);
       if (!guild) throw new Error('Guild not found.');
       if (!guild.voiceConnection) throw new Error('Bot not connected to a voice channel.');
+
 
       const dispatcher = guild.voiceConnection.playFile(soundFile);
       dispatcher.setVolume(api.config.soundboard.defaultVolume);
