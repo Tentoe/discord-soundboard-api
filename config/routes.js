@@ -3,6 +3,7 @@ exports.default = {
 
     get: [
       { path: '/guild/:guildId', action: 'guild' },
+      { path: '/guild/:guildId/soundfiles', action: 'soundfiles' },
     ],
     post: [
       { path: '/guild/:guildId/join/:voiceId', action: 'join' },

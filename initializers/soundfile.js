@@ -6,6 +6,7 @@ const path = require('path');
 
 // Fields
 const FILENAME = 'filename';
+const NAME = 'name';
 
 module.exports = class SoundFileInitializer extends Initializer {
   constructor() {
@@ -45,6 +46,15 @@ module.exports = class SoundFileInitializer extends Initializer {
       const allIds = await redisSMEMBERS(getGuildKey(guildID));
       if (allIds.length === 0) throw new Error('No soundfiles found for this guild.');
       return allIds[Math.floor((Math.random() * allIds.length))];
+    };
+
+    api.soundfile.getAll = async (guildID) => {
+      const soundfileIds = await redisSMEMBERS(getGuildKey(guildID));
+      console.log(soundfileIds);
+
+      const ret = soundfileIds.map(id => redisHGET(getKey(id), NAME).then(name => ({ name, id })));
+
+      return Promise.all(ret);
     };
   }
 

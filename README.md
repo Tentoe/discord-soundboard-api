@@ -15,11 +15,8 @@
 
 # Redis Shemas
 
-- `*:nextval` next id for branch
-
-## H soundfile:soundfileID
-- name
-- filename
-
-## L soundboard:soundboardID
-list of soundfileIDs in a soundboard
+`H sb:guild:gID`
+`H sb:guild:gID:soundfile:sfID`
+`H sb:guild:gID:board:bID`
+`H sb:guild:gID:soundfiles`
+`H sb:guild:gID:boards`
