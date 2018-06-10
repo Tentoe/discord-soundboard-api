@@ -18,7 +18,12 @@ module.exports = class SoundFileInitializer extends Initializer {
   }
 
   async initialize() {
-    api.soundfile = { prefix: 'soundfile:', guildPrefix: 'guild:' };
+    api.soundfile = {
+      nextvalSuffix: 'nextval',
+      soundfilesSuffix: 'soundfiles',
+      soundfilePrefix: 'soundfile',
+      guildPrefix: 'sb:guild',
+    };
 
     const redis = api.redis.clients.client;
     const redisINCR = promisify(redis.incr).bind(redis);
@@ -27,32 +32,35 @@ module.exports = class SoundFileInitializer extends Initializer {
     const redisSADD = promisify(redis.sadd).bind(redis);
     const redisSMEMBERS = promisify(redis.smembers).bind(redis);
 
-    const getNextVal = () => redisINCR(`${api.soundfile.prefix}nextval`);
-    const getKey = id => `${api.soundfile.prefix}${id}`;
-    const getGuildKey = id => `${api.soundfile.prefix}${api.soundfile.guildPrefix}${id}`;
+    const getKeyBase = guildID => `${api.soundfile.guildPrefix}:${guildID}`;
+    const getKey = (guildID, id) => `${getKeyBase(guildID)}:${api.soundfile.soundfilePrefix}:${id}`;
+    const getSoundboardsKey = guildID => `${getKeyBase(guildID)}:${api.soundfile.soundfilesSuffix}`;
+    const getNextVal = guildID =>
+      redisINCR(`${getKeyBase(guildID)}:${api.soundfile.soundfilePrefix}:${api.soundfile.nextvalSuffix}`);
 
     api.soundfile.add = async (name, filename, guildID) => {
-      const id = await getNextVal();
-      await redisHMSET(getKey(id), 'name', name, 'filename', filename);
-      await redisSADD(getGuildKey(guildID), id);
+      const id = await getNextVal(guildID);
+
+      await redisHMSET(getKey(guildID, id), 'name', name, 'filename', filename);
+      await redisSADD(getSoundboardsKey(guildID), id);
     };
 
-    api.soundfile.getPath = async id => path.join(
+    api.soundfile.getPath = async (guildID, id) => path.join(
       api.config.soundboard.soundFileDir,
-      await redisHGET(getKey(id), FILENAME),
+      await redisHGET(getKey(guildID, id), FILENAME),
     );
 
     api.soundfile.getRandom = async (guildID) => {
-      const allIds = await redisSMEMBERS(getGuildKey(guildID));
+      const allIds = await redisSMEMBERS(getSoundboardsKey(guildID));
       if (allIds.length === 0) throw new Error('No soundfiles found for this guild.');
       return allIds[Math.floor((Math.random() * allIds.length))];
     };
 
     api.soundfile.getAll = async (guildID) => {
-      const soundfileIds = await redisSMEMBERS(getGuildKey(guildID));
-      console.log(soundfileIds);
+      const soundfileIds = await redisSMEMBERS(getSoundboardsKey(guildID));
 
-      const ret = soundfileIds.map(id => redisHGET(getKey(id), NAME).then(name => ({ name, id })));
+      const ret = soundfileIds.map(id =>
+        redisHGET(getKey(guildID, id), NAME).then(name => ({ name, id })));
 
       return Promise.all(ret);
     };

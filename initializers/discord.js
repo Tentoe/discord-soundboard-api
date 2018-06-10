@@ -55,7 +55,7 @@ module.exports = class DiscordInitializer extends Initializer {
     };
 
     api.discord.play = async (guildID, soundID) => {
-      const soundFile = await api.soundfile.getPath(soundID);
+      const soundFile = await api.soundfile.getPath(guildID, soundID);
       const guild = client.guilds.get(guildID);
       if (!guild) throw new Error('Guild not found.');
       if (!guild.voiceConnection) throw new Error('Bot not connected to a voice channel.');
