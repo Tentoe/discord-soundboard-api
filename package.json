@@ -1,46 +1,26 @@
 {
-  "author": "YOU <YOU@example.com>",
-  "name": "my_actionhero_project",
-  "description": "my actionhero project",
-  "version": "0.1.0",
-  "engines": {
-    "node": ">=8.0.0"
+  "name": "express-test",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "DEBUG=express-test:* NODE_ENV=development node ./built/server",
+    "build": "tsc",
+    "dev": "npm run build && npm start"
   },
   "dependencies": {
-    "actionhero": "^19.0.1",
-    "discord.js": "^11.3.2",
-    "ioredis": "latest",
-    "lodash": "^4.17.10",
-    "node-opus": "^0.3.0",
-    "npm": "^6.1.0",
-    "ws": "latest"
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "express-winston": "^2.5.1",
+    "http-errors": "~1.6.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "winston": "^2.4.2"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.12.0",
-    "jest": "latest",
-    "standard": "latest"
-  },
-  "scripts": {
-    "start": "actionhero start",
-    "dev": "export $(cat .env 2>/dev/null | xargs) > /dev/null && actionhero start",
-    "actionhero": "actionhero",
-    "pretest": "standard",
-    "test": "jest"
-  },
-  "standard": {
-    "ignore": [
-      "public/javascript/ActionheroWebsocketClient.*"
-    ],
-    "globals": [
-      "describe",
-      "test",
-      "beforeAll",
-      "beforeEach",
-      "afterAll",
-      "afterEach",
-      "expect"
-    ]
+    "@types/node": "^10.3.3",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.2"
   }
 }
