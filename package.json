@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=express-test:* NODE_ENV=development node ./built/server",
+    "start": "export $(grep -v '^#' .env | xargs -d '\n') && node ./built/server",
     "build": "tsc",
     "dev": "npm run build && npm start"
   },
