@@ -3,7 +3,8 @@
     "extends": "tslint-config-airbnb",
     "jsRules": {},
     "rules": {
-        "prefer-template": true
+        "prefer-template": true,
+        "max-line-length": [true, 120]
     },
     "rulesDirectory": []
 }

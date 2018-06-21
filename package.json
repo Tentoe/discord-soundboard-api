@@ -3,24 +3,34 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "export $(grep -v '^#' .env | xargs -d '\n') && node ./built/server",
+    "start": "export $(grep -v '^#' .env | xargs -d '\n') && node ./built/src/server",
     "build": "tsc",
-    "dev": "npm run build && npm start"
+    "dev": "npm run build && npm start",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts"
   },
   "dependencies": {
+    "@types/es6-promise": "^3.3.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
+    "discord.js": "^11.3.2",
     "express": "~4.16.0",
     "express-winston": "^2.5.1",
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
-    "tslint-config-airbnb": "^5.9.2",
-    "winston": "^2.4.2"
+    "node-opus": "^0.3.0",
+    "redis": "^2.8.0",
+    "winston": "^3.0.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/mocha": "^5.2.2",
     "@types/node": "^10.3.3",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "ts-node": "^6.1.1",
     "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.9.2",
     "typescript": "^2.9.2"
   }
 }
