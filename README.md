@@ -9,5 +9,5 @@
 - `H sb:guild:gID`
 - `H sb:guild:gID:soundfile:sfID`
 - `H sb:guild:gID:board:bID`
-- `H sb:guild:gID:soundfiles`
-- `H sb:guild:gID:boards`
+- `S sb:guild:gID:soundfiles`
+- `S sb:guild:gID:boards`
