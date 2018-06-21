@@ -1,7 +1,7 @@
 
 import { createServer } from 'http';
 import app from './app';
-import { log } from './logger';
+import { info, error } from './logger';
 
 const listenPort = normalizePort(process.env.PORT || '3000');
 app.set('port', listenPort);
@@ -14,7 +14,7 @@ server.on('listening', () => {
   const addr = server.address();
   const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
 
-  log('info', `Listening on ${bind}`);
+  info(`Listening on ${bind}`);
 });
 
 function normalizePort(val) {
@@ -36,12 +36,12 @@ function onError(error) {
 
   switch (error.code) {
     case 'EACCES':
-      log('error', `${bind} requires elevated privileges`);
+      error(`${bind} requires elevated privileges`);
 
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      log('error', `${bind} is already in use`);
+      error(`${bind} is already in use`);
       process.exit(1);
       break;
     default:

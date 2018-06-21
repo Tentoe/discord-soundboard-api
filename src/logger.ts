@@ -1,18 +1,13 @@
-import * as winston from 'winston';
-import * as expressWinston from 'express-winston';
+import { createLogger, format, transports as winstonTransports } from 'winston';
+import morgan from 'morgan';
 
-const transports = [new (winston.transports.Console)({ json: true })];
+const expressLogger = morgan('dev');
 
-const expressLogger = expressWinston.logger({
-  transports,
-  msg: 'HTTP {{req.method}} {{req.url}}',
-
+const logger = createLogger({
+  transports: [new winstonTransports.Console()],
+  format: format.json(),
 });
 
-const logger = new (winston.Logger)({
-  transports,
-});
+const { info, warn, error } = logger;
 
-const { log } = winston;
-
-export { expressLogger, log };
+export {  expressLogger  , info, warn, error };
