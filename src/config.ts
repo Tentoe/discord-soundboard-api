@@ -1,4 +1,5 @@
 import * as path from 'path';
+import os from 'os';
 
 export const discordToken = process.env.SOUNDBOARD_DISCORD_BOT_USER_TOKEN || 'token';
 
@@ -10,3 +11,11 @@ export const redisConfig = {
 // TODO make path dynamic with path.isAbsolute
 export const soundFileDir = process.env.SOUNDBOARD_SOUND_FILE_DIR || path.join(process.cwd(), 'soundfiles');
 export const defaultVolume = 0.3 ;
+export const uploadConfig = {
+  uploadDir: os.tmpdir(),
+  keepExtensions: false,
+  maxFieldsSize: 1024 * 1024 * 50, // 50MB
+  hash: 'sha512',
+};
+
+export const staticDir = process.env.SOUNDBOARD_STATIC_DIR || path.join(process.cwd(), 'built', 'static');

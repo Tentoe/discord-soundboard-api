@@ -1,5 +1,6 @@
 
 import * as Discord from 'discord.js';
+import { get } from 'lodash';
 
 const noClientUser = m => m.user.constructor !== Discord.ClientUser;
 
@@ -10,7 +11,7 @@ const withoutGuildProperty = (obj) => {
   return returnObject;
 };
 
-const formatGuild = guild => ({
+const formatGuild = (guild : Discord.Guild) =>  ({
   ...guild,
   members: Array.from(guild.members.values()).filter(noClientUser).map(withoutGuildProperty),
   channels: Array.from(guild.channels.values()).map(withoutGuildProperty),
@@ -18,10 +19,10 @@ const formatGuild = guild => ({
   presences: Array.from(guild.presences.values()),
   emojis: Array.from(guild.emojis.values()).map(withoutGuildProperty),
   iconURL: guild.iconURL,
-  voiceChannel: guild!.voiceConnection!.channel!.id,
+  voiceChannel: get(guild, 'voiceConnection.channel.id', undefined),
 });
 
-const formatGuilds = guilds =>
+const formatGuilds = (guilds : Discord.Collection<string, Discord.Guild>) =>
     Array.from(guilds.values()).map(formatGuild);
 
 export { formatGuild , formatGuilds };

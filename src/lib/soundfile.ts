@@ -10,7 +10,7 @@ const getNextVal = guildID =>
   redis.incr(getKey.guild(guildID));
 
 export const add = async (name: string, filename: string, guildID: string | number) => {
-  const soundID = await getKey.soundfileNextval(guildID);
+  const soundID = await redis.get(getKey.soundfileNextval(guildID));
   await redis.hmset(getKey.soundfile(guildID, soundID), { name, filename });
   await redis.sadd(getKey.soundfiles(guildID), soundID);
 };

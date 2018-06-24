@@ -14,11 +14,11 @@ client.on('ready', () => {
 
 const login = () => client.login(discordToken);
 
-const getGuilds = () => formatGuild(client.guilds);
+const getGuilds = () => formatGuilds(client.guilds);
 
 const getGuild = (id) => {
   const guild = client.guilds.get(id);
-  if (guild) return formatGuilds(guild);
+  if (guild) return formatGuild(guild);
   throw new Error('Requested guild not found.');
 };
 
@@ -74,4 +74,6 @@ const play = async (guildID, soundID) => {
 // };
 //   }
 
-export { login };
+export { login,  getGuilds , getGuild };
+
+login();
