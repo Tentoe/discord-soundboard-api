@@ -22,8 +22,8 @@ const getGuild = (id) => {
   throw new Error('Requested guild not found.');
 };
 
-const leave = (id) => {
-  client.guilds.get(id).voiceConnection.disconnect();
+const leave = (guildID: string) => {
+  client.guilds.get(guildID).voiceConnection.disconnect();
 };
 
 const stop = (id) => {
@@ -33,8 +33,8 @@ const stop = (id) => {
   connection.dispatcher.end('const stop');
 };
 
-const join = async (id) => {
-  const channel = client.channels.get(id);
+const join = async (voiceID: string) => {
+  const channel = client.channels.get(voiceID);
   if (channel instanceof Discord.VoiceChannel) {
     await channel.join();
     channel.connection.on('error', error);
@@ -74,6 +74,6 @@ const play = async (guildID, soundID) => {
 // };
 //   }
 
-export { login,  getGuilds , getGuild };
+export { login,  getGuilds , getGuild, join, leave };
 
 login();

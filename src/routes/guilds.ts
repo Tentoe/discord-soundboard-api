@@ -8,7 +8,7 @@ import * as discord from 'src/lib/discord';
 import * as soundfile from 'src/lib/soundfile';
 import { soundFileDir, uploadConfig } from 'src/config';
 
-// TODO write utils  module
+// TODO write utils module
 const asyncCatch = (fn: RequestHandler)  => (req, res , next)  => fn(req, res, next).catch(next);
 
 export const guildsRouter = Router();
@@ -23,12 +23,22 @@ guildsRouter.get('/:guildID', asyncCatch(async (req, res, next) => {
   res.json({ data });
 }));
 
-guildsRouter.get('/:guildId/soundfiles', asyncCatch(async (req, res, next) => {
+guildsRouter.get('/:guildID/soundfiles', asyncCatch(async (req, res, next) => {
   const data = await soundfile.getAll(req.params.guildID);
   res.json({ data });
 }));
 
-const parseFile = (req): Promise<{fields, files}> => {
+guildsRouter.post('/:guildID/join/:voiceID', asyncCatch(async (req, res, next) => {
+  const data = await discord.join(req.params.voiceID); // TODO user guildID to check auth
+  res.json({ data });
+}));
+
+guildsRouter.post('/:guildID/leave', async (req, res, next) => {
+  const data = discord.leave(req.params.guildID);
+  res.json({ data:`sucessfully left channel ${req.params.guildID}` });
+});
+
+const parseFile = (req): Promise<{fields, files}> => { // TODO utils
   const form = Object.assign(new formidable.IncomingForm(), uploadConfig);
   return new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
@@ -64,7 +74,7 @@ guildsRouter.post('/:guildId/upload', async (req, res, next) => {
 
 // get: [
 
-//   { path: '/guild/:guildId/soundfiles', action: 'soundfiles' },
+//   +{ path: '/guild/:guildId/soundfiles', action: 'soundfiles' },
 //   +{ path: '/guild/:guildId', action: 'guild' },
 //   +{ path: '/:path', action: 'servestatic' },
 
