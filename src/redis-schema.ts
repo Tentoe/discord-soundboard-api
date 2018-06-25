@@ -8,6 +8,9 @@ const SEP = ':';
 
 const check = (...check: (string|number)[]): void => {
   check.forEach((element) => {
+    if (!element) {
+      throw new RangeError(`Function doesn't take value of ${element}`);
+    }
     if (element < 0) {
       throw new RangeError(`Function doesn't take negative number. Value:${element}`);
     }
