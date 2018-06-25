@@ -26,10 +26,8 @@ export const getRandomSoundfileID = async (guildID) => {
   return allIds[Math.floor((Math.random() * allIds.length))];
 };
 
-export const getAll = (guildID) => {
-  const soundfileIds = redis.smembers(getKey.soundfiles(guildID));
-
+export const getAll = async (guildID) => {
+  const soundfileIds = await redis.smembers(getKey.soundfiles(guildID));
   const ret = soundfileIds.map(soundID => get(guildID, soundID));
-
   return Promise.all(ret);
 };
