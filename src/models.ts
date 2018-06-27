@@ -10,7 +10,7 @@ export class RawSoundfile {
 }
 
 export class Soundfile extends RawSoundfile {
-  constructor(soundfile: RawSoundfile) {
+  constructor(soundfile: RawSoundfile, public id:string) {
     super(soundfile.name, soundfile.filename);
   }
   getPath() {

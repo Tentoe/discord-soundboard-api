@@ -34,9 +34,28 @@ guildsRouter.post('/:guildID/join/:voiceID', asyncCatch(async (req, res, next) =
 }));
 
 guildsRouter.post('/:guildID/leave', async (req, res, next) => {
-  const data = discord.leave(req.params.guildID);
-  res.json({ data:`sucessfully left channel ${req.params.guildID}` });
+  const { guildID } = req.params;
+  const data = discord.leave(guildID);
+  res.json({ data:`successfully left channel ${guildID}` });
 });
+
+guildsRouter.post('/:guildID/play/:soundID', asyncCatch(async (req, res, next) => {
+  const { guildID, soundID } = req.params;
+  const data = discord.play(guildID, soundID);
+  res.json({ data:`successfully playing sound ${soundID} in guild ${guildID}` });
+}));
+
+guildsRouter.post('/:guildID/stop', asyncCatch(async (req, res, next) => {
+  const { guildID } = req.params;
+  const data = discord.stop(guildID);
+  res.json({ data:`successfully stopped playing in guild ${guildID}` });
+}));
+
+guildsRouter.post('/:guildID/random', asyncCatch(async (req, res, next) => {
+  const { guildID } = req.params;
+  const data = await discord.playRandom(guildID);
+  res.json({ data:`successfully playing random sound in guild ${guildID}` });
+}));
 
 const parseFile = (req): Promise<{fields, files}> => { // TODO utils
   const form = Object.assign(new formidable.IncomingForm(), uploadConfig);
@@ -48,10 +67,10 @@ const parseFile = (req): Promise<{fields, files}> => { // TODO utils
   });
 };
 
-guildsRouter.post('/:guildId/upload', async (req, res, next) => {
+guildsRouter.post('/:guildID/upload', async (req, res, next) => {
 
   const { files : { file } } = await parseFile(req);
-  const { guildId } = req.params;
+  const { guildID } = req.params;
 
   // TODO log user
 
@@ -67,23 +86,7 @@ guildsRouter.post('/:guildId/upload', async (req, res, next) => {
   const unlink = util.promisify(fs.unlink);
   await unlink(file.path);
 
-  await soundfile.add(file.name, newFileName, guildId);
+  await soundfile.add(file.name, newFileName, guildID);
 
   res.json({ data: 'File sucessfully uploaded.' });
 });
-
-// get: [
-
-//   +{ path: '/guild/:guildId/soundfiles', action: 'soundfiles' },
-//   +{ path: '/guild/:guildId', action: 'guild' },
-//   +{ path: '/:path', action: 'servestatic' },
-
-// ],
-// post: [
-//   { path: '/guild/:guildId/join/:voiceId', action: 'join' },
-//   { path: '/guild/:guildId/leave', action: 'leave' },
-//   { path: '/guild/:guildId/play/:soundId', action: 'play' },
-//   { path: '/guild/:guildId/stop', action: 'stop' },
-//   { path: '/guild/:guildId/random', action: 'random' },
-//   +{ path: '/guild/:guildId/upload', action: 'upload' },
-// ],

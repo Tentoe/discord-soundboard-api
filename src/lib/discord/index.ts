@@ -4,7 +4,7 @@ import { info, error } from 'src/logger';
 import { discordToken, defaultVolume } from 'src/config';
 
 import { formatGuild, formatGuilds } from './format';
-import { get as getSoundfile } from 'src/lib/soundfile';
+import { get as getSoundfile, getRandomSoundfileID } from 'src/lib/soundfile';
 
 const client = new Discord.Client();
 
@@ -12,28 +12,28 @@ client.on('ready', () => {
   info(`Logged into Discord as ${client.user.tag}`);
 });
 
-const login = () => client.login(discordToken);
+export const login = () => client.login(discordToken);
 
-const getGuilds = () => formatGuilds(client.guilds);
+export const getGuilds = () => formatGuilds(client.guilds);
 
-const getGuild = (id) => {
+export const getGuild = (id) => {
   const guild = client.guilds.get(id);
   if (guild) return formatGuild(guild);
   throw new Error('Requested guild not found.');
 };
 
-const leave = (guildID: string) => {
+export const leave = (guildID: string) => {
   client.guilds.get(guildID).voiceConnection.disconnect();
 };
 
-const stop = (id) => {
-  const connection = client.guilds.get(id).voiceConnection;
+export const stop = (guildID: string) => {
+  const connection = client.guilds.get(guildID).voiceConnection;
   if (!connection) throw new Error('Bot is not currently playing anything.');
 
   connection.dispatcher.end('const stop');
 };
 
-const join = async (voiceID: string) => {
+export const join = async (voiceID: string) => {
   const channel = client.channels.get(voiceID);
   if (channel instanceof Discord.VoiceChannel) {
     await channel.join();
@@ -45,7 +45,7 @@ const join = async (voiceID: string) => {
   throw new Error('Voicechannel not found.');
 };
 
-const play = async (guildID, soundID) => {
+export const play = async (guildID: string, soundID: string) => {
   const soundFile = await getSoundfile(guildID, soundID);
   const guild = client.guilds.get(guildID);
   if (!guild) throw new Error('Guild not found.');
@@ -66,14 +66,9 @@ const play = async (guildID, soundID) => {
   }
 };
 
-// const playRandom = async (guildID) => {
-//   const randomId = await api.soundfile.getRandom(guildID);
-
-//   await; const play; (guildID, randomId);
-//   return randomId;
-// };
-//   }
-
-export { login,  getGuilds , getGuild, join, leave };
+export const playRandom = async (guildID) => {
+  const randomId = await getRandomSoundfileID(guildID);
+  await play(guildID, randomId);
+};
 
 login();

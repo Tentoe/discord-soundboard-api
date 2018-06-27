@@ -19,6 +19,11 @@ app.use(express.static(staticDir));
 
 app.use('/api/guilds', guildsRouter);
 
+app.use('/api/*', (req, res, next) => {
+  res.status(404);
+  res.json({ error:'API endpoint not found.' });
+});
+
 // catch 404 and serve index.html
 app.use((req, res, next) => {
   res.sendFile(path.join(staticDir, 'index.html'));
