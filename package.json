@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "export $(grep -v '^#' .env | xargs -d '\n') && node ./built/src/server",
+    "start": "node ./built/src/server",
     "build": "tsc",
-    "dev": "npm run build && npm start",
+    "env": "export $(grep -v '^#' .env | xargs -d '\n') && npm start",
+    "dev": "npm run build && npm run env",
     "test": "mocha -r ts-node/register src/**/*.spec.ts"
   },
   "dependencies": {
