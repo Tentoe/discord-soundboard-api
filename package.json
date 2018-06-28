@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./built/src/server",
+    "start": "NODE_PATH=./built/ node ./built/src/server",
     "build": "tsc",
     "env": "export $(grep -v '^#' .env | xargs -d '\n') && npm start",
     "dev": "npm run build && npm run env",
