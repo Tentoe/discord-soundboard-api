@@ -1,6 +1,8 @@
 import * as path from 'path';
 import os from 'os';
 
+export const baseURL = process.env.SOUNDBOARD_BASE_URL || 'http://localhost:3000';
+
 export const discordToken = process.env.SOUNDBOARD_DISCORD_BOT_USER_TOKEN || 'token';
 
 export const redisConfig = {
@@ -19,3 +21,6 @@ export const uploadConfig = {
 };
 
 export const staticDir = process.env.SOUNDBOARD_STATIC_DIR || path.join(process.cwd(), 'built', 'static');
+
+export const clientID = process.env.SOUNDBOARD_DISCORD_CLIENT_ID || '';
+export const clientSecret = process.env.SOUNDBOARD_DISCORD_CLIENT_SECRET || '';

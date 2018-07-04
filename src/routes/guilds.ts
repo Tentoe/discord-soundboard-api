@@ -1,8 +1,9 @@
 import { Router, RequestHandler } from 'express';
-import util from 'util';
+import util, { log } from 'util';
 import fs from 'fs';
 import path from 'path';
 import formidable from 'formidable';
+import httpErrors from 'http-errors' ;
 
 import * as discord from 'src/lib/discord';
 import * as soundfile from 'src/lib/soundfile';
@@ -11,7 +12,35 @@ import { soundFileDir, uploadConfig } from 'src/config';
 // TODO write utils module
 const asyncCatch = (fn: RequestHandler)  => (req, res , next)  => fn(req, res, next).catch(next);
 
+const loggedIn = (req, res, next) => {
+  if (req.user) {
+    next();
+  } else {
+    throw httpErrors(401, 'Please log in');
+  }
+};
+
+const isAdmin =  (req, res, next) => {
+  const { guildID } =  req.params;
+  if (req.user && discord.isAdminOfGuild(req.user.id, guildID)) {
+    next();
+  } else {
+    throw httpErrors(401, 'You are not authorized to do that, only administrators are authorized.');
+  }
+};
+
+const canSpeak =  (req, res, next) => {
+  const { guildID } =  req.params;
+  if (req.user && discord.canSpeakInGuild(req.user.id, guildID)) {
+    next();
+  } else {
+    throw httpErrors(401, 'You are not authorized to speak in that guild.');
+  }
+};
+
 export const guildsRouter = Router();
+
+// TODO set permissions on endpoints
 
 guildsRouter.get('/', asyncCatch(async (req, res, next) => {
   const data = await discord.getGuilds();
@@ -41,7 +70,7 @@ guildsRouter.post('/:guildID/leave', async (req, res, next) => {
 
 guildsRouter.post('/:guildID/play/:soundID', asyncCatch(async (req, res, next) => {
   const { guildID, soundID } = req.params;
-  const data = discord.play(guildID, soundID);
+  const data = await discord.play(guildID, soundID);
   res.json({ data:`successfully playing sound ${soundID} in guild ${guildID}` });
 }));
 
@@ -67,7 +96,7 @@ const parseFile = (req): Promise<{fields, files}> => { // TODO utils
   });
 };
 
-guildsRouter.post('/:guildID/upload', async (req, res, next) => {
+guildsRouter.post('/:guildID/upload', loggedIn, isAdmin, async (req, res, next) => {
 
   const { files : { file } } = await parseFile(req);
   const { guildID } = req.params;

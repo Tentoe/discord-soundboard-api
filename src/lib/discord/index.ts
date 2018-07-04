@@ -71,4 +71,20 @@ export const playRandom = async (guildID) => {
   await play(guildID, randomId);
 };
 
+const getMember = (userID: string, guildID: string) => {
+  if (!guildID) throw new Error(`no guildID in path: ${guildID}`);
+  const guild = client.guilds.get(guildID);
+  if (!guild) throw new Error('guild not found');
+  const member = guild.members.get(userID);
+  if (!member) throw new Error('user not in guild');
+  return member;
+};
+
+// TODO test case no admin
+export const isAdminOfGuild = (userID: string, guildID: string) =>
+  getMember(userID, guildID).hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR);
+
+export const canSpeakInGuild = (userID: string, guildID: string) =>
+  getMember(userID, guildID).hasPermission(Discord.Permissions.FLAGS.SPEAK);
+
 login();
