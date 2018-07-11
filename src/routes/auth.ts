@@ -12,7 +12,7 @@ passport.use(
       {
         clientID,
         clientSecret,
-        callbackURL: `${baseURL}/auth/discord/callback`,
+        callbackURL: `${baseURL}/api/auth/discord/callback`,
         scope: 'identify',
       },
       (accessToken, refreshToken, profile, cb) => cb(null, profile), // TODO save token

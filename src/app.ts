@@ -2,15 +2,13 @@
 import cookieParser from 'cookie-parser'; // TODO use or delete
 import express from 'express';
 import expressSession from 'express-session';
-
- // TODO use or delete
 import * as path from 'path';
 
+import { staticDir } from 'src/config';
 import { expressLogger, error as logError } from 'src/logger';
 import { guildsRouter } from './routes/guilds' ;
-import { staticDir } from 'src/config';
-
-import { authRouter, passport } from 'src/auth';
+import { authRouter, passport } from 'src/routes/auth';
+import { statusRouter } from 'src/routes/status';
 
 const app = express();
 
@@ -19,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(expressSession({
-  secret: 'keyboard cat',
+  secret: 'keyboard cat', // TODO chnge for produciton
   resave: false,
   saveUninitialized: false,
 }));
@@ -27,9 +25,10 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.static(staticDir)); // use dedicated path so no false positve 200 html status is returnd
+app.use(express.static(staticDir)); // TODO use dedicated path so no false positve 200 html status is return
 
-app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/status', statusRouter);
 app.use('/api/guilds', guildsRouter);
 
 app.use('/api/*', (req, res, next) => {
