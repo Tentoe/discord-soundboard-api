@@ -1,7 +1,7 @@
 
 import { createServer } from 'http';
 import app from './app';
-import { info, error } from './logger';
+import { info, error as logError } from './logger';
 
 const listenPort = normalizePort(process.env.PORT || '3000');
 app.set('port', listenPort);
@@ -36,12 +36,12 @@ function onError(error) {
 
   switch (error.code) {
     case 'EACCES':
-      error(`${bind} requires elevated privileges`);
+      logError(`${bind} requires elevated privileges`);
 
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      error(`${bind} is already in use`);
+      logError(`${bind} is already in use`);
       process.exit(1);
       break;
     default:
