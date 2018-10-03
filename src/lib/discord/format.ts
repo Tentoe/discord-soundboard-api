@@ -4,25 +4,34 @@ import { get } from 'lodash';
 
 const noClientUser = m => m.user.constructor !== Discord.ClientUser;
 
-// The extra guild Property of some Objects causes them to be Circular, not serializable.
-const withoutGuildProperty = (obj) => {
-  const returnObject = { ...obj };
-  delete returnObject.guild;
-  return returnObject;
-};
-
-const formatGuild = (guild : Discord.Guild) =>  ({
-  ...guild,
-  members: Array.from(guild.members.values()).filter(noClientUser).map(withoutGuildProperty),
-  channels: Array.from(guild.channels.values()).map(withoutGuildProperty),
-  roles: Array.from(guild.roles.values()).map(withoutGuildProperty),
-  presences: Array.from(guild.presences.values()),
-  emojis: Array.from(guild.emojis.values()).map(withoutGuildProperty),
-  iconURL: guild.iconURL,
-  voiceChannel: get(guild, 'voiceConnection.channel.id', undefined),
+// TODO define Model
+const formatMember = (member : Discord.GuildMember) => ({
+  id: member.id,
+  name: member.displayName,
 });
 
-const formatGuilds = (guilds : Discord.Collection<string, Discord.Guild>) =>
-    Array.from(guilds.values()).map(formatGuild);
+// TODO define Model
+const formatChannel = (channel : Discord.GuildChannel) => {
+  return ({
+    id: channel.id,
+    name: channel.name,
+    type: channel.type,
+  });
+};
 
-export { formatGuild , formatGuilds };
+export const formatGuild = (guild : Discord.Guild) =>  {
+  const channels = Array.from(guild.channels.values()).map(formatChannel);
+  const { id, name } = guild;
+  return ({
+    id,
+    name,
+    channels,
+    voiceChannels: channels.filter(c => c.type === 'voice'),
+    members: Array.from(guild.members.values()).map(formatMember),
+    iconURL: guild.iconURL,
+    voiceChannel: get(guild, 'voiceConnection.channel.id', undefined) ,
+  });
+};
+
+export const formatGuilds = (guilds : Discord.Collection<string, Discord.Guild>) =>
+    Array.from(guilds.values()).map(formatGuild);
